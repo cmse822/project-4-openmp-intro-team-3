@@ -8,6 +8,43 @@ See code `Part1.cpp`.
 
 ### 1.2 Solution
 
+At threads = 1, the openmp vs non-openmp code run in virtually the same time with openmp version requiring more time due to the overhead of initializing openmp. At higher thread values, the openmp code runs with a lesser time compared to serial code, in general (see Part 1.4 for exact numbers).
+
+=> The code runs as expected.
+
+### 1.3 Solution
+
+The thread-to-thread speedup study was performed for threads 1 to 32 (in powers of 2). See Part 1.4 for results.
+
+### 1.4 Solution
+
+See figure below for time taken to compute using various number of threads for different matrix sizes. 
+
+![](part1_time.png)
+
+For low matrix size, the time for computation slightly increases with the number of threads. This is because engaging multiple threads for a very small matrix does not pay off and instead causes overhead time. For medium matrix size, the time for computation decreases initially, then stops changing and then starts increasing as the threads are increased. This is due to the same reason stated earlier---after a certain number of threads, the parallelization does not pay off. However, for a high matrix size, we see that the time continuously decreases with increases in number of threads used. 
+
+See figure below for scaling/parallel efficiency achieved using variuos number of threads for different matrix sizes. 
+
+![](part1_scaling.png)
+
+The scaling/efficiency was computed by the following formula:
+$E = \frac{T_1}{p*T_p}$
+where $E$ is the efficiency, $T_1$ is the time for single thread, $p$ is the number of threads adn $T_p$ is the time for $p$ threads. 
+
+The scaling plot shows the same trend as the time plot. For low matrix size, the efficiency decreases as more threads are unnecessarily engaged, and the parallelization does not pay off. For medium matrix size, the efficiency is initially high at max thread count where it starts increasing again. This is due to the same reason stated earlier---after a certain number of threads, the parallelization overhead outweighs its benefit. However, for a high matrix size, we see that the efficiency is almost about 90% for all threads and slightly less than 90% for the max thread. This shows that for high matrix sizes, the parallelization with OpenMP performs sufficiently well in reducing the computation time.
+
+### 1.5 Solution
+
+**Verified**. Both parallel and serial codes were run for the same matrices using different number of threads. The computed result was the same for each. 
+
+See example outputs below for threads 2 and 4 respectively using a matrix size of 5:
+
+![](part1-5_threads2.png)
+
+![](part1-5_threads4.png)
+
+
 ## Part 2: Adding OpenMP threading to a simple MPI Application 
 
 ### 2.1 to 2.4 Solution 

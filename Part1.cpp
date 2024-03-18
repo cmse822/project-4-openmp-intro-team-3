@@ -1,9 +1,3 @@
-/*
-
-Modifying MMM code from Project 1 to include OpenMP parallelization
-
-*/
-
 #include <iostream>
 #include <vector>
 #include "get_walltime.c"
@@ -11,21 +5,19 @@ Modifying MMM code from Project 1 to include OpenMP parallelization
 
 using namespace std;
 
-
 // Define Matrix data type
 typedef vector<vector<double>> Matrix;
 
 // Function to generate a random N x N matrix
 Matrix generateRandomMatrix(int N) {
-    
     // Create matrix object 
     Matrix matrix(N, vector<double>(N));
 
     // Populate matrix object 
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
-            //Assigning random number between 0-9
-            matrix[i][j] = rand()%10;   
+            // Assigning random number between 0-9
+            matrix[i][j] = rand() % 10;   
         }
     }
 
@@ -36,35 +28,8 @@ Matrix generateRandomMatrix(int N) {
     return matrix;
 }
 
-// //Function to multiply matricies together 
-// Matrix multiplyMatrices(const Matrix A, const Matrix B, long int &flops) {  
-
-//     // Pull sizes of arrays from matricies 
-//     int rowsA = A.size();
-//     int colsA = A[0].size();
-//     int colsB = B[0].size();
-
-//     //Define result Matrix object 
-//     Matrix result(rowsA, vector<double>(colsB));
-
-//     // Calculate Matrix Multiplication
-//     // colsA must equal rowsB
-//     for (int i = 0; i < rowsA; ++i) {
-//         for (int j = 0; j < colsB; ++j) {
-//             for (int k = 0; k < colsA; ++k) {
-//                 result[i][j] += A[i][k] * B[k][j];
-//                 flops += 2;
-//             }
-//         }
-//     }
-
-//     // Retirn result of multiplication 
-//     return result;
-// }
-
 // Function to multiply matrices together with OpenMP parallelization
-Matrix multiplyMatrices(const Matrix A, const Matrix B, long int &flops) {
-
+Matrix multiplyMatrices(const Matrix& A, const Matrix& B) {
     int rowsA = A.size();
     int colsA = A[0].size();
     int colsB = B[0].size();
@@ -72,18 +37,37 @@ Matrix multiplyMatrices(const Matrix A, const Matrix B, long int &flops) {
     Matrix result(rowsA, vector<double>(colsB));
 
     // Parallelize the matrix multiplication loop
-    #pragma omp parallel for collapse(2) reduction(+:flops)
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < rowsA; ++i) {
         for (int j = 0; j < colsB; ++j) {
             for (int k = 0; k < colsA; ++k) {
                 result[i][j] += A[i][k] * B[k][j];
-                flops += 2;
             }
         }
     }
 
     return result;
 }
+
+// Function to multiply matrices together without OpenMP parallelization
+Matrix multiplyMatrices_serial(const Matrix& A, const Matrix& B) {
+    int rowsA = A.size();
+    int colsA = A[0].size();
+    int colsB = B[0].size();
+
+    Matrix result(rowsA, vector<double>(colsB));
+
+    for (int i = 0; i < rowsA; ++i) {
+        for (int j = 0; j < colsB; ++j) {
+            for (int k = 0; k < colsA; ++k) {
+                result[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+
+    return result;
+}
+
 
 // Function to print the matrix (if you so choose)
 void printMatrix(const Matrix& matrix) {
@@ -95,10 +79,8 @@ void printMatrix(const Matrix& matrix) {
     }
 }
 
-
 // Main function 
 int main(int argc, char *argv[]) {
-
     // Must feed in matrix size on the command line 
     if (argc != 2) {
         cerr << "Usage: " << argv[0] << " <MatrixSize>" << endl;
@@ -114,37 +96,46 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Randomly populate Matricies A and B 
+    // Randomly populate Matrices A and B 
     Matrix matrixA = generateRandomMatrix(N);
     Matrix matrixB = generateRandomMatrix(N);
 
-    // Define start and end time and flops to calculate the number of flops per second. 
+    // Define start and end time to calculate the time taken for multiplication. 
     double startTime, endTime;
-    long int flops = 0;
-
-    // Multiply Matricies together 
+ 
+    // Multiply Matrices together 
     get_walltime(&startTime);
-    Matrix product = multiplyMatrices(matrixA, matrixB, flops);
+    Matrix product1 = multiplyMatrices(matrixA, matrixB);
     get_walltime(&endTime);
 
     // Calculate elapsed time 
     double elapsedTime = endTime - startTime;
 
     // Output Results to the terminal 
-    cout << "FLOP count: " << flops << endl;
+    cout << "Time elapsed parallel: " << elapsedTime << " seconds." << endl;
+    
+    // Multiply Matrices together 
+    get_walltime(&startTime);
+    Matrix product2 = multiplyMatrices_serial(matrixA, matrixB);
+    get_walltime(&endTime);
+
+    // Calculate elapsed time 
+    elapsedTime = endTime - startTime;
+
+    // Output Results to the terminal 
     cout << "Time elapsed: " << elapsedTime << " seconds." << endl;
-    cout << "Gflops/s: " << (flops / elapsedTime) / 1e9 << endl;
 
+    // Optional: Print matrices and see final multiplication result 
+    /*
+    cout << "MATRIX A:" << endl;
+    printMatrix(matrixA);
 
-    // Optional: Print matricies and see final multiplication result 
-        // cout << "MATRIX A:" << endl;
-        // printMatrix(matrixA);
+    cout << "MATRIX B:" << endl;
+    printMatrix(matrixB);
 
-        // cout << "MATRIX B:" << endl;
-        // printMatrix(matrixB);
-
-        // cout << "MATRIX C (The matrix product of A and B):" << endl;
-        // printMatrix(product);
+    cout << "MATRIX C (The matrix product of A and B):" << endl;
+    printMatrix(product);
+    */
 
     return 0;
 }
