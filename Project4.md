@@ -72,10 +72,10 @@ We can see that each rank of MPI compiles the entire code and runs it (as expect
 See code `Part3.cpp`. The output matrix is recorded in Part3_1_matrixC.txt. The two input matrices are recorded in Part3_1_matrixA.txt and Part3_1_matrixB.txt. When the same inputs were given, the result was not impacted by changing the number of OpenMP threads or MPI ranks.
 
 ### 3.2 Solution
-![](p3_500.png)
+![](q3_500.png)
 
-![](p3_1000.png)
+![](q3_1000.png)
 
-![](p3_1500.png)
+![](q3_1500.png)
 
-The above three figures, with different matrix sizes, all showed similar tendency of 
+The above three figures, with different matrix sizes, all showed similar tendencies of 
