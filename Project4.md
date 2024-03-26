@@ -78,4 +78,6 @@ See code `Part3.cpp`. The output matrix is recorded in Part3_1_matrixC.txt. The 
 
 ![](q3_1500.png)
 
-The above three figures, with different matrix sizes, all showed similar tendencies of 
+The above three figures, with different matrix sizes, all showed similar tendencies of rapid drops in time as OpenMP thread = 1 when the MPI rank is before rank 2. When more threads are used, the elapsed time gets shorter. When more MPI ranks are used, elapsed time gets slightly shorter, but the change in time is not as much as the change of the number of threads used. When the matrix size is larger, more time is needed to complete the matrix multiplication. 
+
+When only one thread is used, the increase in MPI ranks can affect the time efficiency more. Also, the number of physical cores and memory bandwidth can limit performance gains, therefore, the efficiency drops when the rank increases to 4.
