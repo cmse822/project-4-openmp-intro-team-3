@@ -65,3 +65,15 @@ I modified the "Hello World!" output slightly so that I could more accurately de
     Hello, World! from omp thread 3 on MPI rank 1
 
 We can see that each rank of MPI compiles the entire code and runs it (as expected). Within each MPI rank it encounters the OMP parallelized block, which we have assigned to 4 threads. It runs each of these 4 threads which return in a random order each time (as expected again) each thread with its own individual "Hello World!". This gives us a total of 8 "Hello World!"s coming from 4 threads*2ranks. 
+
+## Part 3 Hybrid Parallel Matrix Multiplication
+
+### 3.1 Solution
+See code `Part3.cpp`. The output matrix is recorded in Part3_1_matrixC.txt. The two input matrices are recorded in Part3_1_matrixA.txt and Part3_1_matrixB.txt. When the same inputs were given, the result was not impacted by changing the number of OpenMP threads or MPI ranks.
+
+### 3.2 Solution
+![](p3_500.png)
+
+![](p3_1000.png)
+
+![](p3_1500.png)
